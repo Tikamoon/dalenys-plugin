@@ -1,0 +1,36 @@
+services:
+    tikamoon.dalenys_plugin.context.setup.dalenys:
+        class: Tests\Tikamoon\DalenysPlugin\Behat\Context\Setup\DalenysContext
+        arguments:
+            - '@sylius.behat.shared_storage'
+            - '@__symfony__.sylius.repository.payment_method'
+            - '@__symfony__.sylius.fixture.example_factory.payment_method'
+            - '@__symfony__.sylius.factory.payment_method_translation'
+            - '@__symfony__.sylius.manager.payment_method'
+
+        tags:
+            - { name: fob.context_service }
+
+    tikamoon.dalenys_plugin.context.ui.shop.dalenys:
+        class: Tests\Tikamoon\DalenysPlugin\Behat\Context\Ui\Shop\DalenysContext
+        arguments:
+            - '@tikamoon.dalenys_plugin.mocker.dalenys'
+            - '@sylius.behat.page.shop.checkout.complete'
+            - '@tikamoon.dalenys_plugin.page.external'
+            - '@sylius.behat.page.shop.order.show'
+        tags:
+            - { name: fob.context_service }
+
+    tikamoon.dalenys_plugin.context.setup.channel:
+        class: Tests\Tikamoon\DalenysPlugin\Behat\Context\Setup\ChannelContext
+        arguments:
+            - '@__symfony__.sylius.behat.factory.default_channel'
+        tags:
+            - { name: fob.context_service }
+
+    tikamoon.dalenys_plugin.context.ui.admin.managing_payment_methods:
+        class: Tests\Tikamoon\DalenysPlugin\Behat\Context\Ui\Admin\ManagingPaymentMethodsContext
+        arguments:
+            - '@tikamoon.dalenys_plugin.page.admin.payment_method.create'
+        tags:
+            - { name: fob.context_service }

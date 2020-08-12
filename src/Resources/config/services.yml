@@ -1,0 +1,44 @@
+services:
+    tikamoon.dalenys.form.type.gateway_configuration:
+        class: Tikamoon\DalenysPlugin\Form\Type\DalenysGatewayConfigurationType
+        public: true
+        tags:
+            - { name: sylius.gateway_configuration_type, type: dalenys, label: tikamoon.dalenys.gateway_label }
+            - { name: form.type }
+
+    tikamoon.dalenys.gateway_factory:
+        class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
+        public: true
+        arguments: [Tikamoon\DalenysPlugin\DalenysGatewayFactory]
+        tags:
+            - { name: payum.gateway_factory_builder, factory: dalenys }
+
+    tikamoon.dalenys.action.capture:
+        class: Tikamoon\DalenysPlugin\Action\CaptureAction
+        public: true
+        arguments:
+            - '@payum'
+        tags:
+            - { name: payum.action, factory: dalenys, alias: payum.action.capture }
+
+    tikamoon.dalenys.action.notify:
+        class: Tikamoon\DalenysPlugin\Action\NotifyAction
+        public: true
+        arguments:
+            - '@sm.factory'
+        tags:
+            - { name: payum.action, factory: dalenys, alias: payum.action.notify }
+
+    tikamoon.dalenys.action.status:
+        class: Tikamoon\DalenysPlugin\Action\StatusAction
+        public: true
+        arguments:
+            - '@request_stack'
+        tags:
+            - { name: payum.action, factory: dalenys, alias: payum.action.status }
+
+    tikamoon.dalenys.bridge.dalenys_bridge:
+        class: Tikamoon\DalenysPlugin\Bridge\DalenysBridge
+        public: true
+        arguments:
+            - '@request_stack'

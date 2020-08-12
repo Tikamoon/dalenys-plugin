@@ -1,0 +1,5 @@
+services:
+    tikamoon.dalenys_plugin.mocker.dalenys:
+        class: Tests\Tikamoon\DalenysPlugin\Behat\Mocker\DalenysMocker
+        arguments:
+            - '@sylius.behat.mocker'
