@@ -1,0 +1,14 @@
+services:
+    tikamoon.dalenys_plugin.page.external:
+        class: Tests\Tikamoon\DalenysPlugin\Behat\Page\External\DalenysCheckoutPage
+        parent: 'sylius.behat.page'
+        public: 'false'
+        arguments:
+            - '@__symfony__.sylius.repository.payment_security_token'
+
+    tikamoon.dalenys_plugin.page.admin.payment_method.create:
+        class: Tests\Tikamoon\DalenysPlugin\Behat\Page\Admin\PaymentMethod\CreatePage
+        parent: 'sylius.behat.page.admin.crud.create'
+        public: 'false'
+        arguments:
+            - 'sylius_admin_payment_method_create'

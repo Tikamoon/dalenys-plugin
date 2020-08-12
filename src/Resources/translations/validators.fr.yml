@@ -1,0 +1,12 @@
+tikamoon:
+    dalenys:
+        merchant_id:
+            not_blank: Entrez l'identifiant du marchand.
+        api_key_id:
+            not_blank: Entrez la clé API ID
+        key_version:
+            not_blank: Entrez la clé de version
+        secret_key:
+            not_blank: Veuillez entrer la clé secrète.
+        channel:
+            currency: La seule devise autorisée est EUR.

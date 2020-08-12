@@ -1,0 +1,10 @@
+tikamoon:
+    dalenys:
+        environment: Environnement
+        api_key_id: ID clé API
+        secret_key: Clé secrète
+        merchant_id: ID marchand
+        key_version: Key version
+        gateway_label: Dalenys
+        production: Production
+        test: Test
