@@ -163,9 +163,11 @@ final class SimplePayment
             $payment->setDetails($response);
         }
 
-        if ($response['EXECCODE'] === '0001' && $response['REDIRECT']) {
-            throw new HttpRedirect($response['REDIRECT']);
+        if ($response['EXECCODE'] === '0001' && $response['REDIRECTHTML']) {
+            throw new HttpResponse(base64_decode($response['REDIRECTHTML']));
         }
+
+        return $response;
     }
 
     /**

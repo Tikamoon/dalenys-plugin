@@ -448,8 +448,6 @@ class Dalenys
      */
     private $shaSign;
 
-    private $dataString;
-
     private $responseRequest;
 
     private $parameterArray;
@@ -465,7 +463,7 @@ class Dalenys
         $signature = $this->responseData;
         $compute = hash('sha256', utf8_encode($signature . $this->secretKey));
         if (strcmp($this->shaSign, $compute) == 0) {
-            if ((strcmp($this->parameters['responseCode'], "00") == 0) || (strcmp($this->parameters['responseCode'], "60") == 0)) {
+            if (strcmp($this->parameters['EXECCODE'], "00") == 0) {
                 $resultat = true;
             }
         }
