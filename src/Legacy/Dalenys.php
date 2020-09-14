@@ -35,6 +35,8 @@ class Dalenys
         'billingAddress.street', 'billingAddress.streetNumber', 'billingAddress.zipCode',
         'billingContact.email', 'billingContact.firstname', 'billingContact.gender',
         'billingContact.lastname', 'billingContact.mobile', 'billingContact.phone',
+        'shippingAddress.city', 'shippingAddress.street', 'shippingAddress.streetNumber',
+        'shippingAddress.zipCode', 'shippingAddress.country',
         'customerAddress', 'customerAddress.city', 'customerAddress.company',
         'customerAddress.country', 'customerAddress.postBox', 'customerAddress.state',
         'customerAddress.street', 'customerAddress.streetNumber', 'customerAddress.zipCode',
@@ -200,6 +202,16 @@ class Dalenys
         $this->parameters['billingAddress.street'] = \Normalizer::normalize($street);
     }
 
+    public function setBillingAddressCountry($country): void
+    {
+        $this->parameters['billingAddress.country'] = $country;
+    }
+
+    public function setShippingAddressCountry($country): void
+    {
+        $this->parameters['shippingAddress.country'] = $country;
+    }
+
     public function setBillingAddressStreetNumber($nr)
     {
         if (strlen($nr) > 10) {
@@ -242,9 +254,51 @@ class Dalenys
         $this->parameters['billingContact.lastname'] = str_replace(array("'", '"'), '', \Normalizer::normalize($lastname)); // replace quotes
     }
 
+    public function setShippingAddressStreet($street): void
+    {
+        if (strlen($street) > 35) {
+            throw new \InvalidArgumentException("street is too long");
+        }
+        $this->parameters['shippingAddress.street'] = \Normalizer::normalize($street);
+    }
+
+    public function setShippingAddressZipCode($zipCode): void
+    {
+        if (strlen($zipCode) > 10) {
+            throw new \InvalidArgumentException("zipCode is too long");
+        }
+        $this->parameters['shippingAddress.zipCode'] = \Normalizer::normalize($zipCode);
+    }
+
+    public function setShippingAddressCity($city): void
+    {
+        if (strlen($city) > 25) {
+            throw new \InvalidArgumentException("city is too long");
+        }
+        $this->parameters['shippingAddress.city'] = \Normalizer::normalize($city);
+    }
+
     public function getCustomerFullName()
     {
         return $this->parameters['billingContact.firstname'] . ' ' . $this->parameters['billingContact.lastname'];
+    }
+
+    public function getBillingAddress()
+    {
+        if (isset($this->parameters['billingAddress.streetNumber'])) {
+            return $this->parameters['billingAddress.streetNumber'] . ' ' . $this->parameters['billingAddress.street'];
+        }
+
+        return $this->parameters['billingAddress.street'];
+    }
+
+    public function getShippingAddress()
+    {
+        if (isset($this->parameters['shippingAddress.streetNumber'])) {
+            return $this->parameters['shippingAddress.streetNumber'] . ' ' . $this->parameters['shippingAddress.street'];
+        }
+
+        return $this->parameters['shippingAddress.street'];
     }
 
     public function setCaptureDay($number)
@@ -500,6 +554,19 @@ class Dalenys
         $params['ORDERID'] = (string) $this->parameters['orderId'];
         $params['SELECTEDBRAND'] = $this->parameters['selectedBrand'];
         $params['VERSION'] = Dalenys::INTERFACE_VERSION;
+        $params['3DSECURE'] = "yes";
+        $params['3DSECUREDISPLAYMODE'] = "MAIN";
+
+        $params['3DSECUREPREFERENCE'] = "sca";
+        $params['BILLINGADDRESS'] = $this->getBillingAddress();
+        $params['BILLINGCITY'] = $this->parameters['billingAddress.city'];
+        $params['BILLINGCOUNTRY'] = $this->parameters['billingAddress.country'];
+        $params['BILLINGPOSTALCODE'] = $this->parameters['billingAddress.zipCode'];
+        $params['SHIPTOADDRESS'] = $this->getShippingAddress();
+        $params['SHIPTOADDRESSTYPE'] = "new";
+        $params['SHIPTOCITY'] = $this->parameters['shippingAddress.city'];
+        $params['SHIPTOCOUNTRY'] = $this->parameters['shippingAddress.country'];
+        $params['SHIPTOPOSTALCODE'] = $this->parameters['shippingAddress.zipCode'];
 
         $params['HASH'] = $this->hash($this->secretKey, $params);
         $requestParams = ['method' => 'payment', 'params' => $params];

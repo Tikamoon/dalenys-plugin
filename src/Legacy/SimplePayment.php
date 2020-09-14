@@ -143,6 +143,14 @@ final class SimplePayment
         $this->dalenys->setSelectedBrand($this->selectedBrand);
         $this->dalenys->setOrderId($this->order->getId());
         $this->dalenys->setMethod('payment');
+        $this->dalenys->setBillingAddressCountry($this->order->getBillingAddress()->getCountryCode());
+        $this->dalenys->setBillingAddressStreet($this->order->getBillingAddress()->getStreet());
+        $this->dalenys->setBillingAddressCity($this->order->getBillingAddress()->getCity());
+        $this->dalenys->setBillingAddressZipCode($this->order->getBillingAddress()->getPostcode());
+        $this->dalenys->setShippingAddressCountry($this->order->getShippingAddress()->getCountryCode());
+        $this->dalenys->setShippingAddressStreet($this->order->getShippingAddress()->getStreet());
+        $this->dalenys->setShippingAddressCity($this->order->getShippingAddress()->getCity());
+        $this->dalenys->setShippingAddressZipCode($this->order->getShippingAddress()->getPostcode());
 
         $this->dalenys->validate();
 
