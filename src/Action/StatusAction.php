@@ -48,7 +48,7 @@ final class StatusAction implements ActionInterface
 
         $transactionReference = isset($model['transactionReference']) ? $model['transactionReference'] : null;
 
-        $status = isset($model['status']) ? $model['status'] : null;
+        $status = isset($model['response']['EXECCODE']) ? $model['response']['EXECCODE'] : null;
 
         if ((null === $transactionReference) && !$requestCurrent->isMethod('POST')) {
 
@@ -57,13 +57,13 @@ final class StatusAction implements ActionInterface
             return;
         }
 
-        if ($transactionReference) {
+        if ($transactionReference && $status === "0000") {
             $request->markCaptured();
 
             return;
         }
 
-        if ($status === PaymentInterface::STATE_CANCELLED) {
+        if ((int) $status > 1) {
 
             $request->markCanceled();
 

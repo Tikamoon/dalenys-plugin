@@ -114,9 +114,9 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
         $currencyCode = $payment->getCurrencyCode();
         $targetUrl = $request->getToken()->getTargetUrl();
         $amount = $payment->getAmount();
-        $hfToken = $payment->getDetails()['dalenys-hf-token'] ?? null ;
-        $cardFullName = $payment->getDetails()['dalenys-card-full-name'] ?? null ;
-        $selectedBrand = $payment->getDetails()['dalenys-selected-brand'] ?? null ;
+        $hfToken = $payment->getDetails()['dalenys-hf-token'] ?? null;
+        $cardFullName = $payment->getDetails()['dalenys-card-full-name'] ?? null;
+        $selectedBrand = $payment->getDetails()['dalenys-selected-brand'] ?? null;
 
         $transactionReference = "DalenysWS" . uniqid() . "OR" . $payment->getOrder()->getNumber();
         $orderChannel = $payment->getOrder()->getChannel()->getCode();
@@ -141,8 +141,9 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
             $payment->getOrder()
         );
 
+        $response = $simplePayment->execute();
+        $model['response'] = $response;
         $request->setModel($model);
-        $simplePayment->execute();
     }
 
     /**
