@@ -543,7 +543,6 @@ class Dalenys
         $params['CLIENTEMAIL'] = $this->parameters['customerEmail'];
         $params['CLIENTIDENT'] = $this->parameters['customerEmail'];
         $params['CLIENTIP'] = $_SERVER['REMOTE_ADDR'];
-        $params['CLIENTREFERRER'] = $_SERVER['HTTP_REFERER'];
         $params['CLIENTUSERAGENT'] = $_SERVER['HTTP_USER_AGENT'];
         $params['DESCRIPTION'] = "Payment for " . $this->parameters['customerEmail'];
         $params['HFTOKEN'] = $this->parameters['hfToken'];
