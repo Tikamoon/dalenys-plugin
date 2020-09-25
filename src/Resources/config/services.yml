@@ -25,7 +25,7 @@ services:
         class: Tikamoon\DalenysPlugin\Action\NotifyAction
         public: true
         arguments:
-            - '@sm.factory'
+            - "@sylius.repository.order"
         tags:
             - { name: payum.action, factory: dalenys, alias: payum.action.notify }
 

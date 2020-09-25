@@ -86,6 +86,11 @@ final class SimplePayment
      */
     private $order;
 
+    /**
+     * @var string
+     */
+    private $extraData;
+
     public function __construct(
         Dalenys $dalenys,
         $merchantId,
@@ -101,7 +106,8 @@ final class SimplePayment
         $hfToken,
         $cardFullName,
         $selectedBrand,
-        $order
+        $order,
+        $extraData
     ) {
         $this->automaticResponseUrl = $automaticResponseUrl;
         $this->transactionReference = $transactionReference;
@@ -118,6 +124,7 @@ final class SimplePayment
         $this->cardFullName = $cardFullName;
         $this->selectedBrand = $selectedBrand;
         $this->order = $order;
+        $this->extraData = $extraData;
     }
 
     public function execute()
@@ -151,6 +158,7 @@ final class SimplePayment
         $this->dalenys->setShippingAddressStreet($this->order->getShippingAddress()->getStreet());
         $this->dalenys->setShippingAddressCity($this->order->getShippingAddress()->getCity());
         $this->dalenys->setShippingAddressZipCode($this->order->getShippingAddress()->getPostcode());
+        $this->dalenys->setExtraData($this->extraData);
 
         $this->dalenys->validate();
 

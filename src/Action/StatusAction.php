@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @author Vincent Notebaert <vnotebaert@kisoc.com>
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
  */
 final class StatusAction implements ActionInterface
 {
@@ -64,7 +63,6 @@ final class StatusAction implements ActionInterface
         }
 
         if ((int) $status > 1) {
-
             $request->markCanceled();
 
             return;

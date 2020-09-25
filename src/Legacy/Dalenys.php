@@ -1,14 +1,9 @@
 <?php
 
-/**
- * This file is a part of OpenSource Dalenys payment library adjusted for purposes of this project.
- * We are not the authors of the core logic of this class.
- */
-
 namespace Tikamoon\DalenysPlugin\Legacy;
 
 /**
- * @author Vincent Notebaert <vnotebaert@kisoc.com> READ THE FILE HEADER.
+ * @author Vincent Notebaert <vnotebaert@kisoc.com>
  */
 class Dalenys
 {
@@ -399,6 +394,11 @@ class Dalenys
         $this->parameters['cardFullName'] = $cardFullName;
     }
 
+    public function setExtraData(string $extradata)
+    {
+        $this->parameters['extraData'] = $extradata;
+    }
+
     public function __call($method, $args)
     {
         if (substr($method, 0, 3) == 'set') {
@@ -564,6 +564,7 @@ class Dalenys
         $params['SHIPTOCITY'] = $this->parameters['shippingAddress.city'];
         $params['SHIPTOCOUNTRY'] = $this->parameters['shippingAddress.country'];
         $params['SHIPTOPOSTALCODE'] = $this->parameters['shippingAddress.zipCode'];
+        $params['EXTRADATA'] = $this->parameters['extraData'];
 
         $params['HASH'] = $this->hash($this->secretKey, $params);
         $requestParams = ['method' => 'payment', 'params' => $params];

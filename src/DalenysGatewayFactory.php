@@ -8,6 +8,7 @@
 namespace Tikamoon\DalenysPlugin;
 
 use Tikamoon\DalenysPlugin\Action\ConvertPaymentAction;
+use Tikamoon\DalenysPlugin\Action\NotifyAction;
 use Tikamoon\DalenysPlugin\Bridge\DalenysBridgeInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
@@ -27,6 +28,7 @@ final class DalenysGatewayFactory extends GatewayFactory
             'payum.factory_title' => 'Dalenys',
 
             'payum.action.convert' => new ConvertPaymentAction(),
+            // 'payum.action.notify_unsafe' => new NotifyAction(),
 
             'payum.http_client' => '@tikamoon.dalenys.bridge.dalenys_bridge',
         ]);

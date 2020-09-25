@@ -10,38 +10,31 @@ namespace Tikamoon\DalenysPlugin\Action;
 use Tikamoon\DalenysPlugin\Bridge\DalenysBridgeInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
-use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Exception\UnsupportedApiException;
 use Payum\Core\GatewayAwareTrait;
-use Sylius\Component\Core\Model\PaymentInterface;
 use Payum\Core\Request\Notify;
-use Sylius\Component\Payment\PaymentTransitions;
-use Webmozart\Assert\Assert;
-use SM\Factory\FactoryInterface;
+use Sylius\Bundle\PayumBundle\Request\GetStatus as Status;
+use Payum\Core\Request\GetToken;
+use Payum\Core\GatewayAwareInterface;
+use Sylius\Component\Core\Repository\OrderRepositoryInterface;
+
 
 /**
  * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
  */
-final class NotifyAction implements ActionInterface, ApiAwareInterface
+final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayAwareInterface
 {
     use GatewayAwareTrait;
 
-    /**
-     * @var DalenysBridgeInterface
-     */
+    /** @var DalenysBridgeInterface */
     private $dalenysBridge;
 
-    /**
-     * @var FactoryInterface
-     */
-    private $stateMachineFactory;
+    /** @var OrderRepositoryInterface */
+    private $orderRepository;
 
-    /**
-     * @param FactoryInterface $stateMachineFactory
-     */
-    public function __construct(FactoryInterface $stateMachineFactory)
+    public function __construct(OrderRepositoryInterface $orderRepository)
     {
-        $this->stateMachineFactory = $stateMachineFactory;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -49,19 +42,28 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface
      */
     public function execute($request)
     {
-        /** @var $request Notify */
-        RequestNotSupportedException::assertSupports($this, $request);
+        // check hash 
+        $dalenys = $this->dalenysBridge->createDalenys($this->dalenysBridge->getSecretKey());
+        $hash = $dalenys->hash($this->dalenysBridge->getSecretKey(), $_GET);
 
-        if ($this->dalenysBridge->paymentVerification()) {
+        if ($_GET['EXTRADATA'] && null === $request->getModel()) {
+            if ($_GET['HASH'] === $hash) {
+                $getTokenRequest = new GetToken($_GET['EXTRADATA']);
+                $this->gateway->execute($getTokenRequest);
 
-            /** @var PaymentInterface $payment */
-            $payment = $request->getFirstModel();
+                $notifyRequest = new Notify($getTokenRequest->getToken());
+                $this->gateway->execute($notifyRequest);
 
-            $payment->getDetails()['authorisationId'] = $this->dalenysBridge->getAuthorisationId();
+                $statusRequest = new Status($notifyRequest->getModel());
+                $this->gateway->execute($statusRequest);
 
-            Assert::isInstanceOf($payment, PaymentInterface::class);
+                $response = $_GET;
+                $response['transactionReference'] = $response['EXTRADATA'];
+                $response['response'] = $response;
 
-            $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH)->apply(PaymentTransitions::TRANSITION_COMPLETE);
+                $statusRequest->getModel()->offsetSet('response', $response);
+                $this->gateway->execute($statusRequest);
+            }
         }
     }
 
@@ -82,9 +84,6 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface
      */
     public function supports($request)
     {
-        return
-            $request instanceof Notify &&
-            $request->getModel() instanceof \ArrayObject
-        ;
+        return $request instanceof Notify;
     }
 }
