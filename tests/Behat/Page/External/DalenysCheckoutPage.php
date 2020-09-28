@@ -13,7 +13,7 @@ use Sylius\Behat\Page\Page;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class DalenysCheckoutPage extends Page implements DalenysCheckoutPageInterface
 {

@@ -3,7 +3,7 @@
 namespace Tikamoon\DalenysPlugin\Legacy;
 
 /**
- * @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 class Dalenys
 {

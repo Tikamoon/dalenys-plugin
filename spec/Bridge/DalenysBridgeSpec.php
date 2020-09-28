@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class DalenysBridgeSpec extends ObjectBehavior
 {

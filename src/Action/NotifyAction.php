@@ -12,12 +12,16 @@ use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
 use Payum\Core\Exception\UnsupportedApiException;
 use Payum\Core\GatewayAwareTrait;
-use Payum\Core\Request\Notify;
-use Sylius\Bundle\PayumBundle\Request\GetStatus as Status;
+use Payum\Core\Reply\HttpRedirect;
 use Payum\Core\Request\GetToken;
+use Payum\Core\Request\Notify;
 use Payum\Core\GatewayAwareInterface;
-use Sylius\Component\Core\Repository\OrderRepositoryInterface;
-
+use SM\Factory\FactoryInterface;
+use Sylius\Bundle\PayumBundle\Request\GetStatus as Status;
+use Sylius\Component\Payment\PaymentTransitions;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
@@ -26,45 +30,89 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayA
 {
     use GatewayAwareTrait;
 
+    /** @var FlashBagInterface */
+    private $flashBag;
+
     /** @var DalenysBridgeInterface */
     private $dalenysBridge;
 
-    /** @var OrderRepositoryInterface */
-    private $orderRepository;
+    /** @var FactoryInterface */
+    private $stateMachineFactory;
 
-    public function __construct(OrderRepositoryInterface $orderRepository)
-    {
-        $this->orderRepository = $orderRepository;
+    /** @var RouterInterface */
+    private $router;
+
+    /** @var TranslatorInterface */
+    private $translator;
+
+    public function __construct(
+        FactoryInterface $stateMachineFactory,
+        RouterInterface $router,
+        FlashBagInterface $flashBag,
+        TranslatorInterface $translator
+    ) {
+        $this->stateMachineFactory = $stateMachineFactory;
+        $this->router = $router;
+        $this->flashBag = $flashBag;
+        $this->translator = $translator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function execute($request)
     {
-        // check hash 
-        $dalenys = $this->dalenysBridge->createDalenys($this->dalenysBridge->getSecretKey());
-        $hash = $dalenys->hash($this->dalenysBridge->getSecretKey(), $_GET);
+        $accountKey = $this->dalenysBridge->getAccountKey();
+        $secretKey = $this->dalenysBridge->getSecretKey();
 
-        if ($_GET['EXTRADATA'] && null === $request->getModel()) {
-            if ($_GET['HASH'] === $hash) {
-                $getTokenRequest = new GetToken($_GET['EXTRADATA']);
-                $this->gateway->execute($getTokenRequest);
+        $dalenys = $this->dalenysBridge->createDalenys($secretKey);
+        $hash = $dalenys->hash($accountKey, $_GET);
+        $isGet = is_array($_GET) && array_key_exists('EXTRADATA', $_GET);
 
-                $notifyRequest = new Notify($getTokenRequest->getToken());
-                $this->gateway->execute($notifyRequest);
+        if ($isGet && null === $request->getModel() && $_GET['HASH'] === $hash) {
+            $getTokenRequest = new GetToken($_GET['EXTRADATA']);
+            $this->gateway->execute($getTokenRequest);
 
-                $statusRequest = new Status($notifyRequest->getModel());
-                $this->gateway->execute($statusRequest);
+            $notifyRequest = new Notify($getTokenRequest->getToken());
+            $this->gateway->execute($notifyRequest);
 
-                $response = $_GET;
-                $response['transactionReference'] = $response['EXTRADATA'];
-                $response['response'] = $response;
+            $statusRequest = new Status($notifyRequest->getModel());
+            $this->gateway->execute($statusRequest);
 
-                $statusRequest->getModel()->offsetSet('response', $response);
-                $this->gateway->execute($statusRequest);
+            $statusRequest->getModel()->offsetSet('response', $_GET);
+            $this->gateway->execute($statusRequest);
+
+            /** @var PaymentInterface $payment */
+            $payment = $statusRequest->getFirstModel();
+            $details = $payment->getDetails();
+            $details['response'] = $_GET;
+            $payment->setDetails($details);
+
+            switch ($_GET['EXECCODE']) {
+                case '0000':
+                    $state = PaymentTransitions::TRANSITION_COMPLETE;
+                    $targetUrl = 'sylius_shop_order_thank_you';
+                    $params = [];
+                    $this->flashBag->add('success', $this->translator->trans('tikamoon.payment.completed'));
+                    break;
+
+                default:
+                    $state = PaymentTransitions::TRANSITION_FAIL;
+                    $targetUrl = 'sylius_shop_order_show';
+                    $params = ['tokenValue' => $payment->getOrder()->getTokenValue()];
+                    $this->flashBag->add('error', $this->translator->trans('tikamoon.payment.failed'));
+                    break;
             }
+
+            $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+
+            if (null !== $transition = $stateMachine->getTransitionToState($state)) {
+                $stateMachine->apply($transition);
+            }
+
+            $url = $this->router->generate($targetUrl, $params);
+
+            throw new HttpRedirect($url);
         }
+
+        return;
     }
 
     /**

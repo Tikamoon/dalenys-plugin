@@ -12,7 +12,7 @@ use Payum\Core\Reply\HttpRedirect;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
 /**
- * @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class SimplePayment
 {
@@ -172,6 +172,8 @@ final class SimplePayment
         }
 
         if ($response['EXECCODE'] === '0001' && $response['REDIRECTHTML']) {
+            file_put_contents('/tmp/payments.log', PHP_EOL . 'REDIRECTION' . PHP_EOL, FILE_APPEND);
+
             throw new HttpResponse(base64_decode($response['REDIRECTHTML']));
         }
 

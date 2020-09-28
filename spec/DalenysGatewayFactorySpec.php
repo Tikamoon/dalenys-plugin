@@ -11,7 +11,7 @@ use PhpSpec\ObjectBehavior;
 use Payum\Core\GatewayFactory;
 
 /**
- * @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class DalenysGatewayFactorySpec extends ObjectBehavior
 {

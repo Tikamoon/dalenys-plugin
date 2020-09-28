@@ -12,7 +12,7 @@ use Payum\Core\Request\Convert;
 use Payum\Core\Model\PaymentInterface;
 
 /**
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class ConvertPaymentActionSpec extends ObjectBehavior
 {

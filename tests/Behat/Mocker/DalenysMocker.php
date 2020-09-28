@@ -12,7 +12,7 @@ use Tikamoon\DalenysPlugin\Bridge\DalenysBridgeInterface;
 use Sylius\Behat\Service\Mocker\Mocker;
 
 /**
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class DalenysMocker
 {
@@ -50,28 +50,27 @@ final class DalenysMocker
             ->andReturn(true);
 
         $openDalenysWrapper
-            ->shouldReceive('setSecretKey', 'setEnvironment', 'setMerchantId', 'setKeyVersion')
-        ;
+            ->shouldReceive('setAccountKey', 'setSecretKey', 'setEnvironment', 'setMerchantId', 'setKeyVersion');
+
+        $openDalenysWrapper
+            ->shouldReceive('getAccountKey')
+            ->andReturn('test');
 
         $openDalenysWrapper
             ->shouldReceive('getSecretKey')
-            ->andReturn('test')
-        ;
+            ->andReturn('test');
 
         $openDalenysWrapper
             ->shouldReceive('getMerchantId')
-            ->andReturn('test')
-        ;
+            ->andReturn('test');
 
         $openDalenysWrapper
             ->shouldReceive('getKeyVersion')
-            ->andReturn('test')
-        ;
+            ->andReturn('test');
 
         $openDalenysWrapper
             ->shouldReceive('getEnvironment')
-            ->andReturn(Dalenys::TEST)
-        ;
+            ->andReturn(Dalenys::TEST);
 
         $action();
 
@@ -99,28 +98,23 @@ final class DalenysMocker
             ->andReturn(true);
 
         $openDalenysWrapper
-            ->shouldReceive('setSecretKey', 'setEnvironment', 'setMerchantId', 'setKeyVersion')
-        ;
+            ->shouldReceive('setSecretKey', 'setEnvironment', 'setMerchantId', 'setKeyVersion');
 
         $openDalenysWrapper
             ->shouldReceive('getSecretKey')
-            ->andReturn('test')
-        ;
+            ->andReturn('test');
 
         $openDalenysWrapper
             ->shouldReceive('getMerchantId')
-            ->andReturn('test')
-        ;
+            ->andReturn('test');
 
         $openDalenysWrapper
             ->shouldReceive('getKeyVersion')
-            ->andReturn('test')
-        ;
+            ->andReturn('test');
 
         $openDalenysWrapper
             ->shouldReceive('getEnvironment')
-            ->andReturn(Dalenys::TEST)
-        ;
+            ->andReturn(Dalenys::TEST);
 
         $action();
 

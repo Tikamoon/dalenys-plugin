@@ -12,7 +12,7 @@ use Tests\Tikamoon\DalenysPlugin\Behat\Page\Admin\PaymentMethod\CreatePageInterf
 use Webmozart\Assert\Assert;
 
 /**
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class ManagingPaymentMethodsContext implements Context
 {
@@ -42,6 +42,7 @@ final class ManagingPaymentMethodsContext implements Context
      */
     public function iConfigureItWithTestDalenysCredentials()
     {
+        $this->createPage->setDalenysPluginGatewayAccountKey('test');
         $this->createPage->setDalenysPluginGatewaySecretKey('test');
         $this->createPage->setDalenysPluginGatewayMerchantId('test');
         $this->createPage->setDalenysPluginGatewayKeyVersion('test');

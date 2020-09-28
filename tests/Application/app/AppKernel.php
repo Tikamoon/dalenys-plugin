@@ -12,7 +12,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use PSS\SymfonyMockerContainer\DependencyInjection\MockerContainer;
 
 /**
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 class AppKernel extends Kernel
 {

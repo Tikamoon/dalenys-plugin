@@ -14,7 +14,7 @@ use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
 
 /**
- * @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class DalenysGatewayFactory extends GatewayFactory
 {
@@ -28,7 +28,6 @@ final class DalenysGatewayFactory extends GatewayFactory
             'payum.factory_title' => 'Dalenys',
 
             'payum.action.convert' => new ConvertPaymentAction(),
-            // 'payum.action.notify_unsafe' => new NotifyAction(),
 
             'payum.http_client' => '@tikamoon.dalenys.bridge.dalenys_bridge',
         ]);
@@ -43,7 +42,7 @@ final class DalenysGatewayFactory extends GatewayFactory
             ];
 
             $config->defaults($config['payum.default_options']);
-            $config['payum.required_options'] = ['secret_key', 'environment', 'merchant_id', 'key_version', 'api_key_id'];
+            $config['payum.required_options'] = ['account_key', 'secret_key', 'environment', 'merchant_id', 'key_version', 'api_key_id'];
 
             $config['payum.api'] = function (ArrayObject $config) {
                 $config->validateNotEmpty($config['payum.required_options']);
@@ -51,6 +50,7 @@ final class DalenysGatewayFactory extends GatewayFactory
                 /** @var DalenysBridgeInterface $dalenysBridge */
                 $dalenysBridge = $config['payum.http_client'];
 
+                $dalenysBridge->setAccountKey($config['account_key']);
                 $dalenysBridge->setSecretKey($config['secret_key']);
                 $dalenysBridge->setMerchantId($config['merchant_id']);
                 $dalenysBridge->setApiKeyId($config['api_key_id']);
