@@ -1,0 +1,4 @@
+tikamoon:
+    payment:
+        completed: 'Se ha realizado el pago.'
+        failed: 'Pago fallido.'
