@@ -14,7 +14,7 @@ use Tests\Tikamoon\DalenysPlugin\Behat\Mocker\DalenysMocker;
 use Tests\Tikamoon\DalenysPlugin\Behat\Page\External\DalenysCheckoutPageInterface;
 
 /**
- * @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class DalenysContext implements Context
 {

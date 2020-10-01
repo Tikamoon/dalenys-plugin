@@ -12,7 +12,7 @@ use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Sylius\Behat\Page\PageInterface;
 
 /**
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 interface DalenysCheckoutPageInterface extends PageInterface
 {

@@ -10,14 +10,25 @@ namespace Tests\Tikamoon\DalenysPlugin\Behat\Page\Admin\PaymentMethod;
 use Sylius\Behat\Page\Admin\Crud\CreatePageInterface as BaseCreatePageInterface;
 
 /**
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 interface CreatePageInterface extends BaseCreatePageInterface
 {
     /**
-     * @param string $secretKey
+     * {@inheritdoc}
      */
-    public function setDalenysPluginGatewaySecretKey($secretKey);
+    public function setDalenysPluginGatewayAccountKey($accountKey)
+    {
+        $this->getDocument()->fillField('Account key', $accountKey);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDalenysPluginGatewaySecretKey($secretKey)
+    {
+        $this->getDocument()->fillField('Secure key', $secretKey);
+    }
 
     /**
      * @param string $merchantId

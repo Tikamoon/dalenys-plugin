@@ -17,7 +17,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- * @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class DalenysGatewayConfigurationType extends AbstractType
 {
@@ -48,6 +48,15 @@ final class DalenysGatewayConfigurationType extends AbstractType
                 'constraints' => [
                     new NotBlank([
                         'message' => 'tikamoon.dalenys.api_key_id.not_blank',
+                        'groups' => ['sylius']
+                    ])
+                ],
+            ])
+            ->add('account_key', TextType::class, [
+                'label' => 'tikamoon.dalenys.account_key',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'tikamoon.dalenys.account_key.not_blank',
                         'groups' => ['sylius']
                     ])
                 ],

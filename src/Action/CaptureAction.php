@@ -22,8 +22,8 @@ use Webmozart\Assert\Assert;
 use Payum\Core\Payum;
 
 /**
- * @author Vincent Notebaert <vnotebaert@kisoc.com>
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author Vincent Notebaert <vnotebaert@kiosc.com>
+ * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class CaptureAction implements ActionInterface, ApiAwareInterface
 {
@@ -138,7 +138,8 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
             $hfToken,
             $cardFullName,
             $selectedBrand,
-            $payment->getOrder()
+            $payment->getOrder(),
+            $notifyToken->getHash()
         );
 
         $response = $simplePayment->execute();
