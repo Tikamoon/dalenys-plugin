@@ -10,7 +10,7 @@ namespace Tikamoon\DalenysPlugin\Bridge;
 use Tikamoon\DalenysPlugin\Legacy\Dalenys;
 
 /**
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 interface DalenysBridgeInterface
 {
@@ -32,6 +32,16 @@ interface DalenysBridgeInterface
      * @return bool
      */
     public function isPostMethod();
+
+    /**
+     * @return string
+     */
+    public function getAccountKey();
+
+    /**
+     * @param string $accountKey
+     */
+    public function setAccountKey($accountKey);
 
     /**
      * @return string

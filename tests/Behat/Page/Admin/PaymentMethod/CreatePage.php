@@ -11,10 +11,18 @@ use Behat\Mink\Element\NodeElement;
 use Sylius\Behat\Page\Admin\Crud\CreatePage as BaseCreatePage;
 
 /**
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 class CreatePage extends BaseCreatePage implements CreatePageInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function setDalenysPluginGatewayAccountKey($accountKey)
+    {
+        $this->getDocument()->fillField('Account key', $accountKey);
+    }
+
     /**
      * {@inheritdoc}
      */

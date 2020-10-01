@@ -11,7 +11,7 @@ use Behat\Behat\Context\Context;
 use Sylius\Component\Core\Test\Services\DefaultChannelFactory;
 
 /**
- * @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class ChannelContext implements Context
 {

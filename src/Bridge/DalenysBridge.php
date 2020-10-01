@@ -11,7 +11,7 @@ use Tikamoon\DalenysPlugin\Legacy\Dalenys;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class DalenysBridge implements DalenysBridgeInterface
 {
@@ -24,6 +24,11 @@ final class DalenysBridge implements DalenysBridgeInterface
      * @var string
      */
     private $apiKeyId;
+
+    /**
+     * @var string
+     */
+    private $accountKey;
 
     /**
      * @var string
@@ -93,6 +98,22 @@ final class DalenysBridge implements DalenysBridgeInterface
         $currentRequest = $this->requestStack->getCurrentRequest();
 
         return $currentRequest->isMethod('POST');
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccountKey()
+    {
+        return $this->accountKey;
+    }
+
+    /**
+     * @param string $accountKey
+     */
+    public function setAccountKey($accountKey)
+    {
+        $this->accountKey = $accountKey;
     }
 
     /**

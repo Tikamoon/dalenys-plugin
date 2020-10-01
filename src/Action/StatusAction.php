@@ -15,8 +15,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * @author Vincent Notebaert <vnotebaert@kisoc.com>
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class StatusAction implements ActionInterface
 {
@@ -51,7 +50,6 @@ final class StatusAction implements ActionInterface
         $status = isset($model['response']['EXECCODE']) ? $model['response']['EXECCODE'] : null;
 
         if ((null === $transactionReference) && !$requestCurrent->isMethod('POST')) {
-
             $request->markNew();
 
             return;
@@ -64,14 +62,12 @@ final class StatusAction implements ActionInterface
         }
 
         if ((int) $status > 1) {
-
             $request->markCanceled();
 
             return;
         }
 
         if ($status === PaymentInterface::STATE_COMPLETED) {
-
             $request->markCaptured();
 
             return;

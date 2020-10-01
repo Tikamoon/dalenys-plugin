@@ -17,7 +17,7 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class DalenysContext implements Context
 {
@@ -79,6 +79,7 @@ final class DalenysContext implements Context
             'environment' => Dalenys::TEST,
             'merchant_id' => 'TEST',
             'key_version' => 'TEST',
+            'account_key' => 'TEST',
             'secret_key' => 'TEST',
             'payum.http_client' => '@tikamoon.dalenys.bridge.dalenys_bridge',
         ]);

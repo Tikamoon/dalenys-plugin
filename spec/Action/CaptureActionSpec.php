@@ -20,7 +20,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Order\Model\Order;
 
 /**
- * @author @author Vincent Notebaert <vnotebaert@kisoc.com>
+ * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class CaptureActionSpec extends ObjectBehavior
 {
@@ -46,8 +46,8 @@ final class CaptureActionSpec extends ObjectBehavior
         Order $order,
         DalenysBridgeInterface $dalenysBridge,
         Dalenys $dalenys
-    )
-    {
+    ) {
+        $dalenysBridge->getAccountKey()->willReturn('123');
         $dalenysBridge->getSecretKey()->willReturn('123');
         $dalenysBridge->getEnvironment()->willReturn(Dalenys::TEST);
         $dalenysBridge->getMerchantId()->willReturn('123');
@@ -69,7 +69,6 @@ final class CaptureActionSpec extends ObjectBehavior
 
         $this
             ->shouldThrow(HttpResponse::class)
-            ->during('execute', [$request])
-        ;
+            ->during('execute', [$request]);
     }
 }

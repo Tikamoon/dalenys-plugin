@@ -2,9 +2,13 @@ tikamoon:
     dalenys:
         environment: Environment
         api_key_id: API key ID
+        account_key: Account key
         secret_key: Secret key
         merchant_id: Merchant ID
         key_version: Key version
         gateway_label: Dalenys
         production: Production
         test: Test
+    payment:
+        completed: 'Payment is succefull.'
+        failed: 'Payment is failed.'
