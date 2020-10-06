@@ -20,6 +20,7 @@ use SM\Factory\FactoryInterface;
 use Sylius\Bundle\PayumBundle\Request\GetStatus as Status;
 use Sylius\Component\Core\OrderPaymentTransitions;
 use Sylius\Component\Payment\PaymentTransitions;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -46,16 +47,21 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayA
     /** @var TranslatorInterface */
     private $translator;
 
+    /** @var RequestStack */
+    private $requestStack;
+
     public function __construct(
         FactoryInterface $stateMachineFactory,
         RouterInterface $router,
         FlashBagInterface $flashBag,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        RequestStack $requestStack
     ) {
         $this->stateMachineFactory = $stateMachineFactory;
         $this->router = $router;
         $this->flashBag = $flashBag;
         $this->translator = $translator;
+        $this->requestStack = $requestStack;
     }
 
     public function execute($request)
@@ -64,11 +70,13 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayA
         $secretKey = $this->dalenysBridge->getSecretKey();
 
         $dalenys = $this->dalenysBridge->createDalenys($secretKey);
-        $hash = $dalenys->hash($accountKey, $_GET);
-        $isGet = is_array($_GET) && array_key_exists('EXTRADATA', $_GET);
+        $requestCurrent = $this->requestStack->getCurrentRequest();
 
-        if ($isGet && null === $request->getModel() && $_GET['HASH'] === $hash) {
-            $getTokenRequest = new GetToken($_GET['EXTRADATA']);
+        $params = !empty($requestCurrent->query) ? $requestCurrent->query->all() : $requestCurrent->request->all();
+        $hash = $dalenys->hash($accountKey, $params);
+
+        if ($params && null === $request->getModel() && $params['HASH'] === $hash) {
+            $getTokenRequest = new GetToken($params['EXTRADATA']);
             $this->gateway->execute($getTokenRequest);
 
             $notifyRequest = new Notify($getTokenRequest->getToken());
@@ -77,16 +85,16 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayA
             $statusRequest = new Status($notifyRequest->getModel());
             $this->gateway->execute($statusRequest);
 
-            $statusRequest->getModel()->offsetSet('response', $_GET);
+            $statusRequest->getModel()->offsetSet('response', $params);
             $this->gateway->execute($statusRequest);
 
             /** @var PaymentInterface $payment */
             $payment = $statusRequest->getFirstModel();
             $details = $payment->getDetails();
-            $details['response'] = $_GET;
+            $details['response'] = $params;
             $payment->setDetails($details);
 
-            switch ($_GET['EXECCODE']) {
+            switch ($params['EXECCODE']) {
                 case '0000':
                     $paymentState = PaymentTransitions::TRANSITION_COMPLETE;
                     $orderState = OrderPaymentTransitions::TRANSITION_PAY;
