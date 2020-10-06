@@ -25,10 +25,11 @@ services:
         class: Tikamoon\DalenysPlugin\Action\NotifyAction
         public: true
         arguments:
-            - "@sm.factory"
-            - "@router"
-            - "@session.flash_bag"
-            - "@translator"
+            - '@sm.factory'
+            - '@router'
+            - '@session.flash_bag'
+            - '@translator'
+            - '@request_stack'
         tags:
             - { name: payum.action, factory: dalenys, alias: payum.action.notify }
 
