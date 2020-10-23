@@ -6,6 +6,7 @@ tikamoon:
         secret_key: Clé secrète
         merchant_id: ID marchand
         key_version: Key version
+        number_of_payments: Nombre de paiements
         gateway_label: Dalenys
         production: Production
         test: Test

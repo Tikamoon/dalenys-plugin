@@ -52,6 +52,7 @@ final class CaptureActionSpec extends ObjectBehavior
         $dalenysBridge->getEnvironment()->willReturn(Dalenys::TEST);
         $dalenysBridge->getMerchantId()->willReturn('123');
         $dalenysBridge->getKeyVersion()->willReturn('3');
+        $dalenysBridge->getNumberOfPayments()->willReturn(1);
         $dalenysBridge->createDalenys('123')->willReturn($dalenys);
         $payment->getOrder()->willReturn($order);
         $payment->getCurrencyCode()->willReturn('EUR');

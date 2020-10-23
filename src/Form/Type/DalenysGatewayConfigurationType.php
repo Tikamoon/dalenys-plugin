@@ -10,6 +10,7 @@ namespace Tikamoon\DalenysPlugin\Form\Type;
 use Tikamoon\DalenysPlugin\Legacy\Dalenys;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -75,6 +76,16 @@ final class DalenysGatewayConfigurationType extends AbstractType
                 'constraints' => [
                     new NotBlank([
                         'message' => 'tikamoon.dalenys.key_version.not_blank',
+                        'groups' => ['sylius']
+                    ])
+                ],
+            ])
+            ->add('number_of_payments', IntegerType::class, [
+                'label' => 'tikamoon.dalenys.number_of_payments',
+                'empty_data' => 1,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'tikamoon.dalenys.number_of_payments.not_blank',
                         'groups' => ['sylius']
                     ])
                 ],

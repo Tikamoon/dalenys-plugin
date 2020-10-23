@@ -47,6 +47,7 @@ final class ManagingPaymentMethodsContext implements Context
         $this->createPage->setDalenysPluginGatewayMerchantId('test');
         $this->createPage->setDalenysPluginGatewayKeyVersion('test');
         $this->createPage->setDalenysPluginGatewayEnvironment('Test');
+        $this->createPage->setDalenysPluginGatewayNumberOfPayments(1);
     }
 
     /**

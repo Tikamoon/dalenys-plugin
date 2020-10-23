@@ -42,6 +42,11 @@ final class SimplePayment
     private $keyVersion;
 
     /**
+     * @var int
+     */
+    private $numberOfPayments;
+
+    /**
      * @var string
      */
     private $amount;
@@ -96,6 +101,7 @@ final class SimplePayment
         $merchantId,
         $apiKeyId,
         $keyVersion,
+        $numberOfPayments,
         $environment,
         $amount,
         $targetUrl,
@@ -117,6 +123,7 @@ final class SimplePayment
         $this->merchantId = $merchantId;
         $this->apiKeyId = $apiKeyId;
         $this->keyVersion = $keyVersion;
+        $this->numberOfPayments = $numberOfPayments;
         $this->amount = $amount;
         $this->currency = $currency;
         $this->targetUrl = $targetUrl;
@@ -135,6 +142,7 @@ final class SimplePayment
         $this->dalenys->setInterfaceVersion(Dalenys::INTERFACE_VERSION);
         $this->dalenys->setApiKeyId($this->apiKeyId);
         $this->dalenys->setKeyVersion($this->keyVersion);
+        $this->dalenys->setNumberOfPayments($this->numberOfPayments);
         $this->dalenys->setAmount($this->amount);
         $this->dalenys->setCurrency($this->currency);
         $this->dalenys->setTransactionReference($this->transactionReference);

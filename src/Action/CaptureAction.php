@@ -109,6 +109,7 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
         $merchantId = $this->dalenysBridge->getMerchantId();
         $apiKeyId = $this->dalenysBridge->getApiKeyId();
         $keyVersion = $this->dalenysBridge->getKeyVersion();
+        $numberOfPayments = $this->dalenysBridge->getNumberOfPayments();
 
         $automaticResponseUrl = $notifyToken->getTargetUrl();
         $currencyCode = $payment->getCurrencyCode();
@@ -128,6 +129,7 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
             $merchantId,
             $apiKeyId,
             $keyVersion,
+            $numberOfPayments,
             $environment,
             $amount,
             $targetUrl,
