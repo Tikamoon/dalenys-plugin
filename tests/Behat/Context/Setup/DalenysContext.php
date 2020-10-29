@@ -81,6 +81,7 @@ final class DalenysContext implements Context
             'key_version' => 'TEST',
             'account_key' => 'TEST',
             'secret_key' => 'TEST',
+            'number_of_payments' => 1,
             'payum.http_client' => '@tikamoon.dalenys.bridge.dalenys_bridge',
         ]);
 

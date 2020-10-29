@@ -42,26 +42,26 @@ class Dalenys
         'instalmentData.transactionReferencesList', 'instalmentData.amountsList', 'paymentPattern',
         'captureDay', 'captureMode', 'merchantTransactionDateTime', 'fraudData.bypass3DS', 'seal',
         'orderChannel', 'orderId', 'returnContext', 'transactionOrigin', 'merchantWalletId', 'paymentMeanId',
-        'hfToken', 'apiKeyId', 'cardFullName', 'selectedBrand'
+        'hfToken', 'apiKeyId', 'cardFullName', 'selectedBrand', 'numberOfPayments',
     ];
 
-    private $requiredFields = array(
+    private $requiredFields = [
         'amount', 'currencyCode', 'interfaceVersion', 'keyVersion', 'merchantId', 'normalReturnUrl', 'orderChannel',
-        'transactionReference', 'hfToken', 'apiKeyId', 'cardFullName', 'selectedBrand'
-    );
+        'transactionReference', 'hfToken', 'apiKeyId', 'cardFullName', 'selectedBrand', 'numberOfPayments',
+    ];
 
-    public $allowedlanguages = array(
+    public $allowedlanguages = [
         'nl', 'fr', 'de', 'it', 'es', 'cy', 'en'
-    );
+    ];
 
-    private static $currencies = array(
+    private static $currencies = [
         'EUR' => '978', 'USD' => '840', 'CHF' => '756', 'GBP' => '826',
         'CAD' => '124', 'JPY' => '392', 'MXP' => '484', 'TRY' => '949',
         'AUD' => '036', 'NZD' => '554', 'NOK' => '578', 'BRC' => '986',
         'ARP' => '032', 'KHR' => '116', 'TWD' => '901', 'SEK' => '752',
         'DKK' => '208', 'KRW' => '410', 'SGD' => '702', 'XPF' => '953',
-        'XOF' => '952'
-    );
+        'XOF' => '952',
+    ];
 
     public function __construct($secret)
     {
@@ -137,6 +137,11 @@ class Dalenys
     public function setKeyVersion($keyVersion): void
     {
         $this->parameters['keyVersion'] = $keyVersion;
+    }
+
+    public function setNumberOfPayments(int $numberOfPayments): void
+    {
+        $this->parameters['numberOfPayments'] = $numberOfPayments;
     }
 
     public function setMethod($method): void
@@ -532,12 +537,13 @@ class Dalenys
     public function executeRequest()
     {
         $ch = curl_init();
+        $params = [];
 
         curl_setopt($ch, CURLOPT_URL, $this->getUrl());
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $params['AMOUNT'] = $this->parameters['amount'];
+        $this->addAmount($params);
         $params['APIKEYID'] = $this->parameters['apiKeyId'];
         $params['CARDFULLNAME'] = $this->parameters['cardFullName'];
         $params['CLIENTEMAIL'] = $this->parameters['customerEmail'];
@@ -594,5 +600,30 @@ class Dalenys
         }
 
         return json_decode($result, true);
+    }
+
+    private function addAmount(&$params): void
+    {
+        $numberOfPayments = $this->parameters['numberOfPayments'];
+        $totalAmount = $this->parameters['amount'];
+        if ($numberOfPayments === 1) {
+            $params['AMOUNT'] = $totalAmount;
+        } else {
+            $amountLeft = $totalAmount;
+            $dateUtc = new \DateTime("now", new \DateTimeZone("UTC"));
+            $params['AMOUNTS'] = [];
+            for ($i = 1; $i <= $numberOfPayments; $i++)
+            {
+                $formatedDate = $dateUtc->format('Y-m-d');
+                if ($i === $numberOfPayments) {
+                    $params['AMOUNTS'][$formatedDate] = $amountLeft;
+                } else {
+                    $partialAmount = (int) ceil($totalAmount / $numberOfPayments);
+                    $params['AMOUNTS'][$formatedDate] = $partialAmount;
+                    $amountLeft -= $partialAmount;
+                }
+                $dateUtc->add(new \DateInterval('P30D'));
+            }
+        }
     }
 }

@@ -58,6 +58,14 @@ class CreatePage extends BaseCreatePage implements CreatePageInterface
     /**
      * {@inheritdoc}
      */
+    public function setDalenysPluginGatewayNumberOfPayments($numberOfPayments)
+    {
+        $this->getDocument()->selectFieldOption('Number of payments', $numberOfPayments);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function findValidationMessage($message)
     {
         $elements = $this->getDocument()->findAll('css', '.sylius-validation-error');

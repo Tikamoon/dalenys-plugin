@@ -74,6 +74,16 @@ interface DalenysBridgeInterface
     public function setKeyVersion($keyVersion);
 
     /**
+     * @return int
+     */
+    public function getNumberOfPayments();
+
+    /**
+     * @param int $numberOfPayment
+     */
+    public function setNumberOfPayments(int $numberOfPayment);
+
+    /**
      * @return string
      */
     public function getEnvironment();

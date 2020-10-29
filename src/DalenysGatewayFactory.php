@@ -39,10 +39,11 @@ final class DalenysGatewayFactory extends GatewayFactory
                 'merchant_id' => '',
                 'api_key_id' => '',
                 'key_version' => '',
+                'number_of_payments' => 1,
             ];
 
             $config->defaults($config['payum.default_options']);
-            $config['payum.required_options'] = ['account_key', 'secret_key', 'environment', 'merchant_id', 'key_version', 'api_key_id'];
+            $config['payum.required_options'] = ['account_key', 'secret_key', 'environment', 'merchant_id', 'key_version', 'api_key_id', 'number_of_payments'];
 
             $config['payum.api'] = function (ArrayObject $config) {
                 $config->validateNotEmpty($config['payum.required_options']);
@@ -55,8 +56,8 @@ final class DalenysGatewayFactory extends GatewayFactory
                 $dalenysBridge->setMerchantId($config['merchant_id']);
                 $dalenysBridge->setApiKeyId($config['api_key_id']);
                 $dalenysBridge->setKeyVersion($config['key_version']);
+                $dalenysBridge->setNumberOfPayments((int) $config['number_of_payments']);
                 $dalenysBridge->setEnvironment($config['environment']);
-
                 return $dalenysBridge;
             };
         }

@@ -46,6 +46,11 @@ final class DalenysBridge implements DalenysBridgeInterface
     private $keyVersion;
 
     /**
+     * @var int
+     */
+    private $numberOfPayments;
+
+    /**
      * @var string
      */
     private $environment;
@@ -162,6 +167,22 @@ final class DalenysBridge implements DalenysBridgeInterface
     public function setKeyVersion($keyVersion)
     {
         $this->keyVersion = $keyVersion;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumberOfPayments(): int
+    {
+        return $this->numberOfPayments;
+    }
+
+    /**
+     * @param int $numberOfPayment
+     */
+    public function setNumberOfPayments(int $numberOfPayment): void
+    {
+        $this->numberOfPayments = $numberOfPayment;
     }
 
     /**

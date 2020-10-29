@@ -46,6 +46,11 @@ interface CreatePageInterface extends BaseCreatePageInterface
     public function setDalenysPluginGatewayEnvironment($environment);
 
     /**
+     * @param int $numberOfPayments
+     */
+    public function setDalenysPluginGatewayNumberOfPayments($numberOfPayments);
+
+    /**
      * @param string $message
      *
      * @return bool

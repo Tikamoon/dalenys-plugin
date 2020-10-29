@@ -6,6 +6,8 @@ tikamoon:
             not_blank: Please enter the API Key ID
         key_version:
             not_blank: Please enter the Key version.
+        number_of_payments:
+            not_blank: Please enter the number of payments.
         account_key:
             not_blank: Please enter the account key.
         secret_key:

@@ -50,7 +50,7 @@ final class DalenysMocker
             ->andReturn(true);
 
         $openDalenysWrapper
-            ->shouldReceive('setAccountKey', 'setSecretKey', 'setEnvironment', 'setMerchantId', 'setKeyVersion');
+            ->shouldReceive('setAccountKey', 'setSecretKey', 'setEnvironment', 'setMerchantId', 'setKeyVersion', 'setNumberOfPayments');
 
         $openDalenysWrapper
             ->shouldReceive('getAccountKey')
@@ -71,6 +71,10 @@ final class DalenysMocker
         $openDalenysWrapper
             ->shouldReceive('getEnvironment')
             ->andReturn(Dalenys::TEST);
+
+        $openDalenysWrapper
+            ->shouldReceive('getNumberOfPayments')
+            ->andReturn(1);
 
         $action();
 
@@ -98,7 +102,7 @@ final class DalenysMocker
             ->andReturn(true);
 
         $openDalenysWrapper
-            ->shouldReceive('setSecretKey', 'setEnvironment', 'setMerchantId', 'setKeyVersion');
+            ->shouldReceive('setSecretKey', 'setEnvironment', 'setMerchantId', 'setKeyVersion', 'setNumberOfPayments');
 
         $openDalenysWrapper
             ->shouldReceive('getSecretKey')
@@ -115,6 +119,10 @@ final class DalenysMocker
         $openDalenysWrapper
             ->shouldReceive('getEnvironment')
             ->andReturn(Dalenys::TEST);
+
+        $openDalenysWrapper
+            ->shouldReceive('getNumberOfPayments')
+            ->andReturn(1);
 
         $action();
 
