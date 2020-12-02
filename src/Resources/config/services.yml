@@ -46,3 +46,11 @@ services:
         public: true
         arguments:
             - '@request_stack'
+
+    tikamoon.dalenys.action.resolve_next_route:
+        class: Tikamoon\DalenysPlugin\Payum\Action\ResolveNextRouteAction
+        public: true
+        arguments:
+            - '@request_stack'
+        tags:
+            - { name: payum.action, factory: dalenys, alias: payum.action.resolve_next_route }
