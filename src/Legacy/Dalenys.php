@@ -10,6 +10,9 @@ class Dalenys
     const TEST = "https://secure-test.dalenys.com/front/service/rest/process";
     const PRODUCTION = "https://secure-magenta1.dalenys.com/front/form/process";
 
+    const TEST_DIRECT = 'https://secure-test.dalenys.com/front/direct-submit/process';
+    const PRODUCTION_DIRECT = 'https://secure-magenta1.dalenys.com/front/direct-submit/process';
+
     const INTERFACE_VERSION = "3.0";
 
     /** @var ShaComposer */
@@ -48,6 +51,10 @@ class Dalenys
     private $requiredFields = [
         'amount', 'currencyCode', 'interfaceVersion', 'keyVersion', 'merchantId', 'normalReturnUrl', 'orderChannel',
         'transactionReference', 'hfToken', 'apiKeyId', 'cardFullName', 'selectedBrand', 'numberOfPayments',
+    ];
+
+    private $requiredFieldsDirect = [
+        'customerEmail', 'amount', 'billingAddress.country', 'merchantId', 'orderId',
     ];
 
     public $allowedlanguages = [
@@ -424,11 +431,15 @@ class Dalenys
         throw new \BadMethodCallException("Unknown method $method");
     }
 
-    public function validate()
+    public function validate($type = '')
     {
-        foreach ($this->requiredFields as $field) {
+        $requiredFields = $this->requiredFields;
+        if ($type == 'direct') {
+            $requiredFields = $this->requiredFieldsDirect;
+        }
+        foreach ($requiredFields as $field) {
             if (empty($this->parameters[$field])) {
-                throw new \RuntimeException($field . " can not be empty");
+                throw new \RuntimeException($field.' can not be empty');
             }
         }
     }
@@ -534,7 +545,7 @@ class Dalenys
         return hash('sha256', $clear_string);
     }
 
-    public function executeRequest()
+    public function executeRequest($type = '')
     {
         $ch = curl_init();
         $params = [];
@@ -544,29 +555,33 @@ class Dalenys
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $this->addAmount($params);
+
+        if ($type !== 'direct') {
+            $params['CARDFULLNAME'] = $this->parameters['cardFullName'];
+            $params['HFTOKEN'] = $this->parameters['hfToken'];
+            $params['SELECTEDBRAND'] = $this->parameters['selectedBrand'];
+            $params['3DSECURE'] = 'yes';
+            $params['3DSECUREDISPLAYMODE'] = 'MAIN';
+            $params['3DSECUREPREFERENCE'] = 'sca';
+        }
+
         $params['APIKEYID'] = $this->parameters['apiKeyId'];
-        $params['CARDFULLNAME'] = $this->parameters['cardFullName'];
         $params['CLIENTEMAIL'] = $this->parameters['customerEmail'];
         $params['CLIENTIDENT'] = $this->parameters['customerEmail'];
         $params['CLIENTIP'] = $_SERVER['REMOTE_ADDR'];
         $params['CLIENTUSERAGENT'] = $_SERVER['HTTP_USER_AGENT'];
-        $params['DESCRIPTION'] = "Payment for " . $this->parameters['customerEmail'];
-        $params['HFTOKEN'] = $this->parameters['hfToken'];
+        $params['DESCRIPTION'] = 'Payment for '.$this->parameters['customerEmail'];
         $params['IDENTIFIER'] = $this->parameters['merchantId'];
-        $params['OPERATIONTYPE'] = "payment";
+        $params['OPERATIONTYPE'] = 'payment';
         $params['ORDERID'] = (string) $this->parameters['orderId'];
-        $params['SELECTEDBRAND'] = $this->parameters['selectedBrand'];
         $params['VERSION'] = Dalenys::INTERFACE_VERSION;
-        $params['3DSECURE'] = "yes";
-        $params['3DSECUREDISPLAYMODE'] = "MAIN";
 
-        $params['3DSECUREPREFERENCE'] = "sca";
         $params['BILLINGADDRESS'] = $this->getBillingAddress();
         $params['BILLINGCITY'] = $this->parameters['billingAddress.city'];
         $params['BILLINGCOUNTRY'] = $this->parameters['billingAddress.country'];
         $params['BILLINGPOSTALCODE'] = $this->parameters['billingAddress.zipCode'];
         $params['SHIPTOADDRESS'] = $this->getShippingAddress();
-        $params['SHIPTOADDRESSTYPE'] = "new";
+        $params['SHIPTOADDRESSTYPE'] = 'new';
         $params['SHIPTOCITY'] = $this->parameters['shippingAddress.city'];
         $params['SHIPTOCOUNTRY'] = $this->parameters['shippingAddress.country'];
         $params['SHIPTOPOSTALCODE'] = $this->parameters['shippingAddress.zipCode'];

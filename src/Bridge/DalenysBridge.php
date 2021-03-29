@@ -59,6 +59,11 @@ final class DalenysBridge implements DalenysBridgeInterface
     private $dalenys;
 
     /**
+     * @var string
+     */
+    private $code;
+
+    /**
      * @param RequestStack $requestStack
      */
     public function __construct(RequestStack $requestStack)
@@ -215,5 +220,15 @@ final class DalenysBridge implements DalenysBridgeInterface
     public function setApiKeyId(string $apiKeyId): void
     {
         $this->apiKeyId = $apiKeyId;
+    }
+
+    public function getCode(): string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): void
+    {
+        $this->code = $code;
     }
 }

@@ -141,7 +141,8 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
             $cardFullName,
             $selectedBrand,
             $payment->getOrder(),
-            $notifyToken->getHash()
+            $notifyToken->getHash(),
+            $token->getGatewayName()
         );
 
         $response = $simplePayment->execute();

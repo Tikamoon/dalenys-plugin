@@ -9,7 +9,9 @@ tikamoon:
         number_of_payments: Number of payments
         gateway_label: Dalenys
         production: Production
+        production_direct: Production Direct
         test: Test
+        test_direct: Test Direct
     payment:
         completed: 'Payment is succefull.'
         failed: 'Payment is failed.'

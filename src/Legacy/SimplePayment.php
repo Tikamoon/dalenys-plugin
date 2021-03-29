@@ -16,6 +16,7 @@ use Sylius\Component\Payment\Model\PaymentInterface;
  */
 final class SimplePayment
 {
+    const SOFORT_CODE = '/sofort/';
     /**
      * @var Dalenys|object
      */
@@ -96,6 +97,11 @@ final class SimplePayment
      */
     private $extraData;
 
+    /**
+     * @var string
+     */
+    private $code;
+
     public function __construct(
         Dalenys $dalenys,
         $merchantId,
@@ -113,7 +119,8 @@ final class SimplePayment
         $cardFullName,
         $selectedBrand,
         $order,
-        $extraData
+        $extraData,
+        $code
     ) {
         $this->automaticResponseUrl = $automaticResponseUrl;
         $this->transactionReference = $transactionReference;
@@ -132,6 +139,7 @@ final class SimplePayment
         $this->selectedBrand = $selectedBrand;
         $this->order = $order;
         $this->extraData = $extraData;
+        $this->code = $code;
     }
 
     public function execute()
@@ -170,7 +178,16 @@ final class SimplePayment
 
         $this->dalenys->validate();
 
-        $response = $this->dalenys->executeRequest();
+        if (!preg_match($this::SOFORT_CODE, $this->code)) {
+            $this->dalenys->setHfToken($this->hfToken);
+            $this->dalenys->setCardFullName($this->cardFullName);
+            $this->dalenys->setSelectedBrand($this->selectedBrand);
+            $this->dalenys->validate();
+            $response = $this->dalenys->executeRequest();
+        } else {
+            $this->dalenys->validate('direct');
+            $response = $this->dalenys->executeRequest('direct');
+        }
 
         if ($response['EXECCODE'] === '0000') {
             /** @var \Sylius\Component\Core\Model\Order $order */

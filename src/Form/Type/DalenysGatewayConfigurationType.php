@@ -31,7 +31,9 @@ final class DalenysGatewayConfigurationType extends AbstractType
             ->add('environment', ChoiceType::class, [
                 'choices' => [
                     'tikamoon.dalenys.production' => Dalenys::PRODUCTION,
+                    'tikamoon.dalenys.production_direct' => Dalenys::PRODUCTION_DIRECT,
                     'tikamoon.dalenys.test' => Dalenys::TEST,
+                    'tikamoon.dalenys.test_direct' => Dalenys::TEST_DIRECT
                 ],
                 'label' => 'tikamoon.dalenys.environment',
             ])
