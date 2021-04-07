@@ -16,7 +16,6 @@ use Payum\Core\Request\Convert;
 
 /**
  * @author Vincent Notebaert <vnotebaert@kiosc.com>
- * @author @author Vincent Notebaert <vnotebaert@kiosc.com>
  */
 final class ConvertPaymentAction implements ActionInterface, GatewayAwareInterface
 {
@@ -42,8 +41,7 @@ final class ConvertPaymentAction implements ActionInterface, GatewayAwareInterfa
         return
             $request instanceof Convert &&
             $request->getSource() instanceof PaymentInterface &&
-            $request->getTo() === 'array'
-        ;
+            $request->getTo() === 'array';
     }
 
     /**

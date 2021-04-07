@@ -7,6 +7,10 @@
 
 namespace Tikamoon\DalenysPlugin\Action;
 
+use App\Entity\Order\Order;
+use App\Entity\Payment\PaymentMethod;
+use App\Repository\PaymentMethodRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Tikamoon\DalenysPlugin\Bridge\DalenysBridgeInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
@@ -18,7 +22,9 @@ use Payum\Core\Request\Notify;
 use Payum\Core\GatewayAwareInterface;
 use SM\Factory\FactoryInterface;
 use Sylius\Bundle\PayumBundle\Request\GetStatus as Status;
-use Sylius\Component\Core\OrderPaymentTransitions;
+use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Order\OrderTransitions;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -50,20 +56,30 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayA
     /** @var RequestStack */
     private $requestStack;
 
+    /** @var EntityManagerInterface */
+    private $em;
+
     public function __construct(
         FactoryInterface $stateMachineFactory,
         RouterInterface $router,
         FlashBagInterface $flashBag,
         TranslatorInterface $translator,
-        RequestStack $requestStack
+        RequestStack $requestStack,
+        EntityManagerInterface $em
     ) {
         $this->stateMachineFactory = $stateMachineFactory;
         $this->router = $router;
         $this->flashBag = $flashBag;
         $this->translator = $translator;
         $this->requestStack = $requestStack;
+        $this->em = $em;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param $request Notify
+     */
     public function execute($request)
     {
         $accountKey = $this->dalenysBridge->getAccountKey();
@@ -76,10 +92,35 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayA
         $hash = $dalenys->hash($accountKey, $params);
 
         if ($params && null === $request->getModel() && $params['HASH'] === $hash) {
-            $getTokenRequest = new GetToken($params['EXTRADATA']);
-            $this->gateway->execute($getTokenRequest);
+            if (array_key_exists('EXTRADATA', $params) && !str_contains($params['EXTRADATA'], 'method')) {
+                $getTokenRequest = new GetToken($params['EXTRADATA']);
+                $this->gateway->execute($getTokenRequest);
 
-            $notifyRequest = new Notify($getTokenRequest->getToken());
+                $notifyRequest = new Notify($getTokenRequest->getToken());
+            } else {
+                /** @var OrderRepository $orderRepository */
+                $orderRepository = $this->em->getRepository(Order::class);
+
+                /** @var OrderInterface $order */
+                $order = $orderRepository->find($params['ORDERID']);
+                $payment = $order->getPayments()[0];
+
+                $details = $payment->getDetails();
+                $details['response'] = $params;
+                $payment->setDetails($details);
+
+                /** @var PaymentMethodRepository $paymentMethodRepository */
+                $paymentMethodRepository = $this->em->getRepository(PaymentMethod::class);
+                $paymentMethod = explode('method=', $params['EXTRADATA']);
+                /** @var PaymentMethodInterface|null $paymentMethod */
+                $paymentMethod = $paymentMethodRepository->findOneBy([
+                    'code' => $paymentMethod[1],
+                ]);
+                $payment->setMethod($paymentMethod);
+
+                $notifyRequest = new Notify($payment);
+            }
+
             $this->gateway->execute($notifyRequest);
 
             $statusRequest = new Status($notifyRequest->getModel());
@@ -88,36 +129,26 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayA
             $statusRequest->getModel()->offsetSet('response', $params);
             $this->gateway->execute($statusRequest);
 
-            /** @var PaymentInterface $payment */
-            $payment = $statusRequest->getFirstModel();
-            $details = $payment->getDetails();
-            $details['response'] = $params;
-            $payment->setDetails($details);
-
             switch ($params['EXECCODE']) {
                 case '0000':
                     $paymentState = PaymentTransitions::TRANSITION_COMPLETE;
-                    $orderState = OrderPaymentTransitions::TRANSITION_PAY;
-                    $targetUrl = 'sylius_shop_order_thank_you';
-                    $params = [];
+                    $orderState = OrderTransitions::TRANSITION_CREATE;
                     $this->flashBag->add('success', $this->translator->trans('tikamoon.payment.completed'));
+                    $route = 'sylius_shop_order_pay';
                     break;
 
                 default:
                     $paymentState = PaymentTransitions::TRANSITION_FAIL;
-                    $orderState = OrderPaymentTransitions::TRANSITION_CANCEL;
-                    $targetUrl = 'sylius_shop_order_show';
-                    $params = ['tokenValue' => $payment->getOrder()->getTokenValue()];
+                    $orderState = OrderTransitions::TRANSITION_CREATE;
                     $this->flashBag->add('error', $this->translator->trans('tikamoon.payment.failed'));
-                    /** @var OrderInterface $order */
-                    $order = $payment->getOrder();
-                    $this->stateMachineFactory->get($order, OrderPaymentTransitions::GRAPH)->apply($orderState);
+                    $route = 'sylius_shop_order_show';
                     break;
             }
 
+            $this->stateMachineFactory->get($order, OrderTransitions::GRAPH)->apply($orderState);
             $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH)->apply($paymentState);
 
-            $url = $this->router->generate($targetUrl, $params);
+            $url = $this->router->generate($route, ['tokenValue' => $order->getTokenValue()]);
 
             throw new HttpRedirect($url);
         }

@@ -1,0 +1,10 @@
+<input type="hidden" name="IDENTIFIER" value="{{ identifier }}" /> 
+<input type="hidden" name="HASH" value="{{ hash }}" />
+<input type="hidden" name="OPERATIONTYPE" value="payment" /> 
+<input type="hidden" name="CLIENTIDENT" value="{{ order.customer.user.username }}" /> 
+<input type="hidden" name="CLIENTEMAIL" value="{{ order.customer.user.username }}" />
+<input type="hidden" name="DESCRIPTION" value="Payment for {{ order.customer.user.username }}" /> 
+<input type="hidden" name="ORDERID" value="{{ order.id }}" /> 
+<input type="hidden" name="AMOUNT" value="{{ order.total }}" /> 
+<input type="hidden" name="BILLINGCOUNTRY" value="{{ order.billingAddress.countryCode }}" /> 
+<input type="hidden" name="VERSION" value="3.0" />

@@ -30,6 +30,7 @@ services:
             - '@session.flash_bag'
             - '@translator'
             - '@request_stack'
+            - '@doctrine.orm.entity_manager'
         tags:
             - { name: payum.action, factory: dalenys, alias: payum.action.notify }
 
