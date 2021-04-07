@@ -30,6 +30,12 @@ public function registerBundles()
 }
 ```
 
+Sofort:
+Add Path to Twig.yaml
+```yaml
+    '%kernel.project_dir%/vendor/tikamoon/dalenys-plugin/templates' : dalenys
+```
+
 ## Usage
 
 Go to the payment methods in your admin panel. Now you should be able to add new payment method for Dalenys gateway.
