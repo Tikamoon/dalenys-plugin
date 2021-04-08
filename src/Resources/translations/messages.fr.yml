@@ -13,3 +13,5 @@ tikamoon:
     payment:
         completed: 'Le paiement a été effectué.'
         failed: 'Le paiement a échoué.'
+        schedule: 'Mon échéancier :'
+        total: 'Total :'

@@ -2,3 +2,5 @@ tikamoon:
     payment:
         completed: 'Il pagamento è stato effettuato.'
         failed: 'Pagamento fallito.'
+        schedule: 'Il mio programma di pagamento :'
+        total: 'Totale :'
