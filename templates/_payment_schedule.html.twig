@@ -1,0 +1,12 @@
+<div class="schedule_multiple">
+    <div class="schedule_payments">
+        <span class="schedule_title">{{  }}</span>
+        {% for date, amount in payments %}
+            <p>- {{ date }} ({{ (amount)|format_currency(order.currencyCode)}})</p>
+        {% endfor %}    
+    </div>
+    <div class="schedule_total">
+        <p><span class="schedule_title">Total : </span>{{ (order.total/100)|format_currency(order.currencyCode) }}</p>
+    </div>
+</div>
+<div class="schedule_reset"></div>

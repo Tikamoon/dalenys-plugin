@@ -13,3 +13,5 @@ tikamoon:
     payment:
         completed: 'Payment is succefull.'
         failed: 'Payment is failed.'
+        schedule: 'My payment schedule :'
+        total: 'Total :'
