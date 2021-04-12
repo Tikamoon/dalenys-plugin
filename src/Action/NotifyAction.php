@@ -145,8 +145,12 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayA
                     break;
             }
 
-            $this->stateMachineFactory->get($order, OrderTransitions::GRAPH)->apply($orderState);
-            $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH)->apply($paymentState);
+            if ($this->stateMachineFactory->get($order, OrderTransitions::GRAPH)->can($orderState)) {
+                $this->stateMachineFactory->get($order, OrderTransitions::GRAPH)->apply($orderState);
+            }
+            if ($this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH)->can($paymentState)) {
+                $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH)->apply($paymentState);
+            }
 
             $url = $this->router->generate($route, ['tokenValue' => $order->getTokenValue()]);
 
