@@ -79,6 +79,6 @@ class DalenysExtension extends AbstractExtension
             }
             $dateUtc->add(new \DateInterval('P30D'));
         }
-        return $environment->render("@dalenys/_schedule.html.twig", ['payments' => $payments, 'order' => $order, 'other' => $gatewayConfig]);
+        return $environment->render("@dalenys/_payment_schedule.html.twig", ['payments' => $payments, 'order' => $order, 'other' => $gatewayConfig]);
     }
 }
