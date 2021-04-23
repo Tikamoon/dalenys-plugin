@@ -92,18 +92,20 @@ final class NotifyAction implements ActionInterface, ApiAwareInterface, GatewayA
         $hash = $dalenys->hash($accountKey, $params);
 
         if ($params && null === $request->getModel() && $params['HASH'] === $hash) {
+
+            /** @var OrderRepository $orderRepository */
+            $orderRepository = $this->em->getRepository(Order::class);
+
+            /** @var OrderInterface $order */
+            $order = $orderRepository->find($params['ORDERID']);
+            $payment = $order->getPayments()[0];
+
             if (array_key_exists('EXTRADATA', $params) && !str_contains($params['EXTRADATA'], 'method')) {
                 $getTokenRequest = new GetToken($params['EXTRADATA']);
                 $this->gateway->execute($getTokenRequest);
 
                 $notifyRequest = new Notify($getTokenRequest->getToken());
             } else {
-                /** @var OrderRepository $orderRepository */
-                $orderRepository = $this->em->getRepository(Order::class);
-
-                /** @var OrderInterface $order */
-                $order = $orderRepository->find($params['ORDERID']);
-                $payment = $order->getPayments()[0];
 
                 $details = $payment->getDetails();
                 $details['response'] = $params;
