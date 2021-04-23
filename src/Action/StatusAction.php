@@ -62,7 +62,7 @@ final class StatusAction implements ActionInterface
         }
 
         if ((int) $status > 1) {
-            $request->markCanceled();
+            $request->markFailed();
 
             return;
         }
