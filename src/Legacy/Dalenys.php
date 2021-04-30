@@ -580,23 +580,23 @@ class Dalenys
         $result = curl_exec($ch);
         $info = curl_getinfo($ch);
 
-        if (!$result) {
-            print "curl error: " . curl_error($ch) . "\n";
-            curl_close($ch);
-            die();
-        }
+        try {
+            if (!$result) {
+                throw new \Exception("curl error: ".curl_error($ch));
+                curl_close($ch);
+            }
 
-        if ($info['http_code'] != 200) {
-            print "service error: " . $info['http_code'] . "\n";
-            print "return: " . $result . "\n";
+            if ($info['http_code'] != 200) {
+                throw new \Exception("service error: ".$info['http_code']."\n"."return: ".$result);
+                curl_close($ch);
+            }
             curl_close($ch);
-            die();
-        }
-        curl_close($ch);
 
-        if (strlen($result) == 0) {
-            print "service did not sent back data\n";
-            die();
+            if (strlen($result) == 0) {
+                throw new \Exception("service did not sent back data");
+            }
+        } catch (\Exception $exception) {
+
         }
 
         return json_decode($result, true);
