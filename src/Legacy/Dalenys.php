@@ -8,7 +8,7 @@ namespace Tikamoon\DalenysPlugin\Legacy;
 class Dalenys
 {
     const TEST = "https://secure-test.dalenys.com/front/service/rest/process";
-    const PRODUCTION = "https://secure-magenta1.dalenys.com/front/form/process";
+    const PRODUCTION = "https://secure-magenta1.dalenys.com/front/service/rest/process";
 
     const INTERFACE_VERSION = "3.0";
 
