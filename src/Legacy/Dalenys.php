@@ -185,9 +185,6 @@ class Dalenys
 
     public function setBillingContactEmail($email): void
     {
-        if (strlen($email) > 50) {
-            throw new \InvalidArgumentException("Email is too long");
-        }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException("Email is invalid");
         }
@@ -196,9 +193,6 @@ class Dalenys
 
     public function setBillingAddressStreet($street): void
     {
-        if (strlen($street) > 35) {
-            throw new \InvalidArgumentException("street is too long");
-        }
         $this->parameters['billingAddress.street'] = \Normalizer::normalize($street);
     }
 
@@ -214,33 +208,21 @@ class Dalenys
 
     public function setBillingAddressStreetNumber($nr)
     {
-        if (strlen($nr) > 10) {
-            throw new \InvalidArgumentException("streetNumber is too long");
-        }
         $this->parameters['billingAddress.streetNumber'] = \Normalizer::normalize($nr);
     }
 
     public function setBillingAddressZipCode($zipCode): void
     {
-        if (strlen($zipCode) > 10) {
-            throw new \InvalidArgumentException("zipCode is too long");
-        }
         $this->parameters['billingAddress.zipCode'] = \Normalizer::normalize($zipCode);
     }
 
     public function setBillingAddressCity($city): void
     {
-        if (strlen($city) > 25) {
-            throw new \InvalidArgumentException("city is too long");
-        }
         $this->parameters['billingAddress.city'] = \Normalizer::normalize($city);
     }
 
     public function setBillingContactPhone($phone): void
     {
-        if (strlen($phone) > 30) {
-            throw new \InvalidArgumentException("phone is too long");
-        }
         $this->parameters['billingContact.phone'] = $phone;
     }
 
@@ -256,25 +238,16 @@ class Dalenys
 
     public function setShippingAddressStreet($street): void
     {
-        if (strlen($street) > 35) {
-            throw new \InvalidArgumentException("street is too long");
-        }
         $this->parameters['shippingAddress.street'] = \Normalizer::normalize($street);
     }
 
     public function setShippingAddressZipCode($zipCode): void
     {
-        if (strlen($zipCode) > 10) {
-            throw new \InvalidArgumentException("zipCode is too long");
-        }
         $this->parameters['shippingAddress.zipCode'] = \Normalizer::normalize($zipCode);
     }
 
     public function setShippingAddressCity($city): void
     {
-        if (strlen($city) > 25) {
-            throw new \InvalidArgumentException("city is too long");
-        }
         $this->parameters['shippingAddress.city'] = \Normalizer::normalize($city);
     }
 
