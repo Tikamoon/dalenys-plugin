@@ -218,7 +218,7 @@ class Dalenys
 
     public function setBillingAddressCity($city): void
     {
-        $this->parameters['billingAddress.city'] = \Normalizer::normalize($city);
+        $this->parameters['billingAddress.city'] = \Normalizer::normalize(substr($city, 0, 50));
     }
 
     public function setBillingContactPhone($phone): void
@@ -248,7 +248,7 @@ class Dalenys
 
     public function setShippingAddressCity($city): void
     {
-        $this->parameters['shippingAddress.city'] = \Normalizer::normalize($city);
+        $this->parameters['shippingAddress.city'] = \Normalizer::normalize(substr($city, 0, 50));
     }
 
     public function getCustomerFullName()
@@ -259,19 +259,19 @@ class Dalenys
     public function getBillingAddress()
     {
         if (isset($this->parameters['billingAddress.streetNumber'])) {
-            return $this->parameters['billingAddress.streetNumber'] . ' ' . $this->parameters['billingAddress.street'];
+            return substr($this->parameters['billingAddress.streetNumber'] . ' ' . $this->parameters['billingAddress.street'], 0, 50);
         }
 
-        return $this->parameters['billingAddress.street'];
+        return substr($this->parameters['billingAddress.street'], 0, 50);
     }
 
     public function getShippingAddress()
     {
         if (isset($this->parameters['shippingAddress.streetNumber'])) {
-            return $this->parameters['shippingAddress.streetNumber'] . ' ' . $this->parameters['shippingAddress.street'];
+            return substr($this->parameters['shippingAddress.streetNumber'] . ' ' . $this->parameters['shippingAddress.street'], 0, 50);
         }
 
-        return $this->parameters['shippingAddress.street'];
+        return substr($this->parameters['shippingAddress.street'], 0, 50);
     }
 
     public function setCaptureDay($number)
