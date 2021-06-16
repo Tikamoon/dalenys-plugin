@@ -7,6 +7,7 @@
 
 namespace Tikamoon\DalenysPlugin\Action;
 
+use Monolog\Logger;
 use Tikamoon\DalenysPlugin\Legacy\SimplePayment;
 use Tikamoon\DalenysPlugin\Bridge\DalenysBridgeInterface;
 use Payum\Core\Action\ActionInterface;
@@ -20,6 +21,7 @@ use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Webmozart\Assert\Assert;
 use Payum\Core\Payum;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Vincent Notebaert <vnotebaert@kiosc.com>
@@ -39,12 +41,17 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
      */
     private $dalenysBridge;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     /**
      * @param Payum $payum
+     * @param LoggerInterface $logger
      */
-    public function __construct(Payum $payum)
+    public function __construct(Payum $payum, $logger)
     {
         $this->payum = $payum;
+        $this->logger = $logger;
     }
 
     /**
@@ -141,7 +148,8 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
             $cardFullName,
             $selectedBrand,
             $payment->getOrder(),
-            $notifyToken->getHash()
+            $notifyToken->getHash(),
+            $this->logger
         );
 
         $response = $simplePayment->execute();
