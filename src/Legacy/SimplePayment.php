@@ -9,6 +9,7 @@ namespace Tikamoon\DalenysPlugin\Legacy;
 
 use Payum\Core\Reply\HttpResponse;
 use Payum\Core\Reply\HttpRedirect;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
 /**
@@ -96,6 +97,9 @@ final class SimplePayment
      */
     private $extraData;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     public function __construct(
         Dalenys $dalenys,
         $merchantId,
@@ -113,7 +117,8 @@ final class SimplePayment
         $cardFullName,
         $selectedBrand,
         $order,
-        $extraData
+        $extraData,
+        $logger
     ) {
         $this->automaticResponseUrl = $automaticResponseUrl;
         $this->transactionReference = $transactionReference;
@@ -132,6 +137,7 @@ final class SimplePayment
         $this->selectedBrand = $selectedBrand;
         $this->order = $order;
         $this->extraData = $extraData;
+        $this->logger = $logger;
     }
 
     public function execute()
@@ -168,9 +174,12 @@ final class SimplePayment
         $this->dalenys->setShippingAddressZipCode($this->order->getShippingAddress()->getPostcode());
         $this->dalenys->setExtraData($this->extraData);
 
+        $this->logger->info(sprintf('[DALENYS SIMPLE PAYMENT] Before validate orderid "%s"', $this->order->getId()));
         $this->dalenys->validate();
+        $this->logger->info(sprintf('[DALENYS SIMPLE PAYMENT] After validate / Before execute orderid "%s"', $this->order->getId()));
 
         $response = $this->dalenys->executeRequest();
+        $this->logger->info(sprintf('[DALENYS SIMPLE PAYMENT] After execute orderid "%s" with response "%s"', $this->order->getId(), json_encode($response)));
 
         if ($response['EXECCODE'] === '0000') {
             /** @var \Sylius\Component\Core\Model\Order $order */
